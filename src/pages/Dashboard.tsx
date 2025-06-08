@@ -3,6 +3,7 @@ import React from 'react';
 import { TaskOverview } from '@/components/dashboard/TaskOverview';
 import { TaskList } from '@/components/dashboard/TaskList';
 import { PerformanceMetrics } from '@/components/dashboard/PerformanceMetrics';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 const Dashboard = () => {
   return (
@@ -14,9 +15,12 @@ const Dashboard = () => {
             <h1 className="text-3xl font-bold text-foreground">Agent Task Dashboard</h1>
             <p className="text-muted-foreground mt-1">Monitor and manage your AI agent tasks</p>
           </div>
-          <div className="text-right">
-            <p className="text-sm text-muted-foreground">Last updated</p>
-            <p className="text-sm font-medium">{new Date().toLocaleTimeString()}</p>
+          <div className="flex items-center gap-4">
+            <div className="text-right">
+              <p className="text-sm text-muted-foreground">Last updated</p>
+              <p className="text-sm font-medium">{new Date().toLocaleTimeString()}</p>
+            </div>
+            <ThemeToggle />
           </div>
         </div>
 

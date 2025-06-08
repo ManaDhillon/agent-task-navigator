@@ -1,124 +1,134 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
 import { TaskItem } from './TaskItem';
-import { Filter, Search } from 'lucide-react';
-import { Input } from '@/components/ui/input';
 
-const mockTasks = [
-  {
-    id: '1',
-    name: 'Customer Data Analysis',
-    progress: 75,
-    status: 'running',
-    tools: ['Python', 'Pandas', 'SQL'],
-    needsInput: false,
-    result: 'success',
-    financialWorth: 15000,
-    estimatedCompletion: '2 hours',
-    priority: 'high'
-  },
-  {
-    id: '2',
-    name: 'Email Marketing Campaign',
-    progress: 45,
-    status: 'running',
-    tools: ['SendGrid API', 'Analytics', 'A/B Testing'],
-    needsInput: true,
-    result: 'pending',
-    financialWorth: 8500,
-    estimatedCompletion: '4 hours',
-    priority: 'medium'
-  },
-  {
-    id: '3',
-    name: 'Inventory Optimization',
-    progress: 100,
-    status: 'completed',
-    tools: ['Machine Learning', 'Forecasting', 'Database'],
-    needsInput: false,
-    result: 'success',
-    financialWorth: 12300,
-    estimatedCompletion: 'Completed',
-    priority: 'high'
-  },
-  {
-    id: '4',
-    name: 'Social Media Content Generation',
-    progress: 25,
-    status: 'running',
-    tools: ['GPT-4', 'Image Generator', 'Scheduler'],
-    needsInput: false,
-    result: 'pending',
-    financialWorth: 3200,
-    estimatedCompletion: '6 hours',
-    priority: 'low'
-  },
-  {
-    id: '5',
-    name: 'Financial Report Generation',
-    progress: 90,
-    status: 'running',
-    tools: ['Excel API', 'Chart.js', 'PDF Generator'],
-    needsInput: true,
-    result: 'pending',
-    financialWorth: 7800,
-    estimatedCompletion: '30 minutes',
-    priority: 'high'
-  },
-  {
-    id: '6',
-    name: 'Website Security Scan',
-    progress: 60,
-    status: 'error',
-    tools: ['Security Scanner', 'Vulnerability DB', 'Reporting'],
-    needsInput: false,
-    result: 'error',
-    financialWorth: 5500,
-    estimatedCompletion: 'Error - needs review',
-    priority: 'critical'
-  }
-];
+export interface Task {
+  id: string;
+  name: string;
+  progress: number;
+  status: 'running' | 'completed' | 'error' | 'paused';
+  tools: string[];
+  needsInput: boolean;
+  result: string;
+  financialWorth: number;
+  estimatedCompletion: string;
+  priority: 'high' | 'medium' | 'low';
+}
 
 export const TaskList = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterStatus, setFilterStatus] = useState('all');
+  const tasks: Task[] = [
+    {
+      id: '1',
+      name: 'Market Research Analysis',
+      progress: 75,
+      status: 'running',
+      tools: ['Web Scraper', 'Data Analyzer', 'Report Generator'],
+      needsInput: false,
+      result: 'In progress - analyzing competitor pricing data',
+      financialWorth: 15000,
+      estimatedCompletion: '2 hours',
+      priority: 'high'
+    },
+    {
+      id: '2',
+      name: 'Customer Sentiment Analysis',
+      progress: 100,
+      status: 'completed',
+      tools: ['Text Processor', 'Sentiment AI', 'Chart Generator'],
+      needsInput: false,
+      result: 'Success - 87% positive sentiment detected',
+      financialWorth: 8500,
+      estimatedCompletion: 'Completed',
+      priority: 'medium'
+    },
+    {
+      id: '3',
+      name: 'Email Campaign Optimization',
+      progress: 45,
+      status: 'paused',
+      tools: ['A/B Tester', 'Email Validator'],
+      needsInput: true,
+      result: 'Waiting for user approval on campaign copy',
+      financialWorth: 12000,
+      estimatedCompletion: 'Pending input',
+      priority: 'high'
+    },
+    {
+      id: '4',
+      name: 'Social Media Automation',
+      progress: 30,
+      status: 'error',
+      tools: ['Social API', 'Content Generator'],
+      needsInput: false,
+      result: 'Error - API rate limit exceeded',
+      financialWorth: 5000,
+      estimatedCompletion: 'Retrying in 1 hour',
+      priority: 'low'
+    },
+    {
+      id: '5',
+      name: 'Invoice Processing',
+      progress: 90,
+      status: 'running',
+      tools: ['PDF Parser', 'OCR Engine', 'Database Writer'],
+      needsInput: false,
+      result: 'Processing batch 3 of 4',
+      financialWorth: 3200,
+      estimatedCompletion: '30 minutes',
+      priority: 'medium'
+    },
+    {
+      id: '6',
+      name: 'Lead Qualification',
+      progress: 60,
+      status: 'paused',
+      tools: ['CRM Connector', 'Score Calculator'],
+      needsInput: true,
+      result: 'Requires manual review of high-value prospects',
+      financialWorth: 22000,
+      estimatedCompletion: 'Pending review',
+      priority: 'high'
+    }
+  ];
 
-  const filteredTasks = mockTasks.filter(task => {
-    const matchesSearch = task.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter = filterStatus === 'all' || task.status === filterStatus;
-    return matchesSearch && matchesFilter;
-  });
+  const getStatusColor = (status: Task['status']) => {
+    switch (status) {
+      case 'running':
+        return 'text-blue-600';
+      case 'completed':
+        return 'text-green-600';
+      case 'error':
+        return 'text-red-600';
+      case 'paused':
+        return 'text-orange-600';
+      default:
+        return 'text-muted-foreground';
+    }
+  };
+
+  const getProgressColor = (progress: number, status: Task['status']) => {
+    if (status === 'error') return 'bg-red-500';
+    if (status === 'completed') return 'bg-green-500';
+    if (status === 'paused') return 'bg-orange-500';
+    return 'bg-blue-500';
+  };
 
   return (
-    <Card>
+    <Card className="dark:bg-card dark:border-border">
       <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle>Active Tasks</CardTitle>
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search tasks..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-8 w-64"
-              />
-            </div>
-            <Button variant="outline" size="sm">
-              <Filter className="h-4 w-4 mr-1" />
-              Filter
-            </Button>
-          </div>
-        </div>
+        <CardTitle className="text-xl text-foreground">Active Tasks</CardTitle>
+        <p className="text-muted-foreground">Detailed view of all agent tasks and their current status</p>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {filteredTasks.map((task) => (
-            <TaskItem key={task.id} task={task} />
+          {tasks.map((task) => (
+            <TaskItem 
+              key={task.id} 
+              task={task} 
+              getStatusColor={getStatusColor}
+              getProgressColor={getProgressColor}
+            />
           ))}
         </div>
       </CardContent>
